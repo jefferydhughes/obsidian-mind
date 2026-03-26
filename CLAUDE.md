@@ -11,6 +11,7 @@ This vault has [obsidian-skills](https://github.com/kepano/obsidian-skills) inst
 - **json-canvas**: Create `.canvas` files with nodes, edges, and visual layouts. See `references/EXAMPLES.md`.
 - **obsidian-bases**: Create `.base` files with views, filters, and formulas. Bases core plugin is enabled. See `references/FUNCTIONS_REFERENCE.md`.
 - **defuddle**: Extract clean markdown from web pages via `defuddle parse <url> --md`.
+- **qmd**: Semantic search across the vault via [QMD](https://github.com/tobi/qmd). Use PROACTIVELY before reading files -- `qmd query "..."` for hybrid search, `qmd search "..."` for keyword, `qmd vsearch "..."` for semantic. Falls back to grep/glob if QMD not installed.
 
 ### Custom Slash Commands
 
@@ -52,6 +53,10 @@ Defined in `.claude/commands/`. See [[Skills]] for full documentation.
 | `reference/` | Codebase knowledge, architecture maps | Flow docs, architecture docs |
 | `thinking/` | Scratchpad for drafts and reasoning | Named `YYYY-MM-DD-topic.md` |
 | `templates/` | Obsidian templates | `Work Note.md`, `Decision Record.md`, etc. |
+| `.claude/commands/` | 10 slash commands | See command table above |
+| `.claude/agents/` | 7 subagents | See subagents table below |
+| `.claude/scripts/` | Hook scripts | `session-start.sh`, `classify-message.py`, `validate-write.py`, `pre-compact.sh` |
+| `.claude/skills/` | Obsidian + QMD skills | Loaded automatically via Skill tool |
 
 ## Obsidian CLI
 
@@ -76,7 +81,11 @@ obsidian orphans                                   # Unlinked notes
 
 ### Starting a Substantial Session
 
-A SessionStart hook automatically injects the vault file listing into context. No need to run `ls` or `find` -- you already know what files exist.
+The `SessionStart` hook automatically injects rich context: vault file listing, North Star goals, active work, recent git changes, open tasks, and triggers a QMD re-index. Most context is already loaded -- you don't need to manually read files.
+
+**Shortcut**: Run `/standup` for a structured morning kickoff that reads everything and presents a summary with suggested priorities.
+
+If doing it manually:
 
 1. Read `Home.md` -- vault entry point with embedded dashboards
 2. Read `brain/North Star.md` -- ground suggestions in current goals
@@ -265,6 +274,7 @@ Claude Code memory for session-level preferences. Vault memories for knowledge t
 - **Creating review briefs?** -- `perf/<cycle>/`
 - **Tracking active project work?** -- `work/active/`
 - **Capturing an incident?** -- `work/incidents/` (use `/incident-capture`)
+- **Dumping unstructured info?** -- use `/dump` to auto-classify and route everything
 
 ### Don't Mix Contexts
 
@@ -274,11 +284,37 @@ When capturing data from Slack, DMs, or meetings:
 - **People dynamics** (feedback, relationships, career) -- goes to `org/people/` notes
 - **Personal conversations** -- only capture if review-relevant; otherwise skip
 
+## Subagents
+
+Specialized agents in `.claude/agents/` for heavy operations. They run in isolated context windows.
+
+| Agent | Purpose | Invoked by |
+|-------|---------|------------|
+| `brag-spotter` | Finds uncaptured wins and competency gaps | `/wrap-up` |
+| `context-loader` | Loads all vault context about a person, project, or concept | Direct |
+| `cross-linker` | Finds missing wikilinks, orphans, broken backlinks | `/vault-audit` |
+| `people-profiler` | Bulk creates/updates person notes from Slack profiles | `/incident-capture` |
+| `review-prep` | Aggregates all performance evidence for a review period | `/review-brief` |
+| `slack-archaeologist` | Full Slack reconstruction -- every message, thread, profile | `/incident-capture` |
+| `vault-librarian` | Deep vault maintenance -- orphans, broken links, stale notes | `/vault-audit` |
+
+## Hooks
+
+Five lifecycle hooks in `.claude/settings.json`:
+
+| Hook | When | What |
+|------|------|------|
+| SessionStart | On startup/resume | QMD re-index, inject North Star, active work, recent changes, tasks, file listing |
+| UserPromptSubmit | Every message | Classifies content (decision, incident, win, 1:1, architecture, person) and injects routing hints |
+| PostToolUse | After writing `.md` | Validates frontmatter, checks for wikilinks, verifies folder placement |
+| PreCompact | Before context compaction | Backs up session transcript to `thinking/session-logs/` |
+| Stop | End of every session | Lightweight checklist reminder: archive, update indexes, check orphans. For thorough review, use `/wrap-up` instead. |
+
 ## Rules
 
 - Never modify `.obsidian/` config files unless explicitly asked.
 - Preserve existing frontmatter when editing notes.
-- Git sync is handled by `obsidian-git` -- don't configure git hooks or auto-commit.
+- Git sync is handled by the user's preferred method (obsidian-git, manual commits, etc.) -- don't configure git hooks or auto-commit.
 - When asked to "remember" something, write to the relevant memory topic note (not `Memories.md` itself) with a link to context.
 - Prefer Obsidian CLI over filesystem when Obsidian is running.
 - **Always invoke Obsidian skills via the Skill tool** before doing vault work. Load `obsidian-markdown` when creating/editing `.md` files. Load `obsidian-cli` when running vault commands. Load `obsidian-bases` or `json-canvas` when working with those file types.
