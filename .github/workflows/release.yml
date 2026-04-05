@@ -33,10 +33,14 @@ jobs:
           echo "ZIP_NAME=$ZIP_NAME" >> "$GITHUB_ENV"
           echo "VERSION=$VERSION" >> "$GITHUB_ENV"
 
-      - name: Create release
+      - name: Create or update release
         run: |
-          gh release create "$VERSION" "$ZIP_NAME" \
-            --title "$VERSION" \
-            --generate-notes
+          if gh release view "$VERSION" &>/dev/null; then
+            gh release upload "$VERSION" "$ZIP_NAME" --clobber
+          else
+            gh release create "$VERSION" "$ZIP_NAME" \
+              --title "$VERSION" \
+              --generate-notes
+          fi
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
