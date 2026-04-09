@@ -69,7 +69,7 @@ jobs:
           cat > /tmp/release_body.md <<'HEADER'
           ## Quick Start
 
-          **Requirements:** [Obsidian](https://obsidian.md), [Claude Code](https://claude.ai/code), Python 3.8+
+          **Requirements:** [Obsidian](https://obsidian.md), [Claude Code](https://claude.ai/code), [Python 3.8+](https://python.org/downloads)
 
           ```bash
           git clone https://github.com/breferrari/obsidian-mind.git
