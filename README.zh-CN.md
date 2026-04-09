@@ -135,13 +135,27 @@ qmd update && qmd embed
 | 钩子 | 触发时机 | 功能 |
 |------|---------|------|
 | 🚀 SessionStart | 启动/恢复时 | QMD 重新索引，注入北极星目标、活跃工作、最近变更、任务、文件列表 |
-| 💬 UserPromptSubmit | 每条消息 | 对内容分类（决策、事件、成就、1:1、架构、人员）并注入路由提示 |
-| ✍️ PostToolUse | 写入 `.md` 后 | 验证 frontmatter、检查 wikilinks、验证文件夹位置 |
+| 💬 UserPromptSubmit | 每条消息 | 对内容分类（决策、事件、成就、1:1、架构、人员、项目更新）并注入路由提示 |
+| ✍️ PostToolUse | 写入 `.md` 后 | 验证 frontmatter、检查 wikilinks |
 | 💾 PreCompact | 上下文压缩前 | 将会话记录备份到 `thinking/session-logs/` |
 | 🏁 Stop | 会话结束时 | 检查清单：归档已完成项目、更新索引、检查孤立笔记 |
 
 > [!TIP]
 > 你只需要正常对话。钩子会处理路由。
+
+### Token 效率
+
+obsidian-mind **不会**将整个 vault 加载到上下文中。它使用分层加载来控制 token 成本：
+
+| 层级 | 内容 | 时机 | 成本 |
+|------|------|------|------|
+| **始终** | `CLAUDE.md` + SessionStart 上下文（北极星摘要、git 摘要、任务、vault 文件列表） | 会话启动时 | ~2K tokens |
+| **按需** | QMD 语义搜索结果 | Claude 需要特定上下文时 | 精准定向 |
+| **触发** | 分类路由提示 | 每条消息 | ~100 tokens |
+| **触发** | PostToolUse 验证 | `.md` 写入后 | ~200 tokens |
+| **罕见** | 完整文件读取 | 仅在明确需要时 | 可变 |
+
+SessionStart 加载**轻量级上下文** — 关键文件的简短摘要、文件名和 git 摘要，而非完整笔记内容。Claude 通过 QMD 进行语义搜索后再读取文件，因此只获取相关内容。分类钩子每条消息仅执行一次轻量级 Python 调用。验证钩子仅在 markdown 写入时触发，跳过排除的路径。
 
 ---
 
