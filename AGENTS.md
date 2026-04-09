@@ -25,9 +25,15 @@ The hook scripts in `.claude/scripts/` are agent-agnostic Python and shell — n
 
 18 slash commands in `.claude/commands/` — agent-agnostic markdown with YAML frontmatter. Invoke as `/om-standup`, `/om-dump`, etc. in any agent that supports custom commands or skills.
 
+## Memory
+
+The vault's memory lives in `brain/` — `Memories.md`, `Patterns.md`, `Key Decisions.md`, `Gotchas.md`. These are plain markdown files that any agent can read and write. When you learn something worth remembering, write it to the relevant `brain/` topic note with a wikilink to context.
+
+The `~/.claude/` auto-loaded memory index is Claude Code-specific — skip that section in `CLAUDE.md`. The vault-side `brain/` notes are the source of truth.
+
 ## What's agent-specific
 
-Subagents (`.claude/agents/`) and the memory system (`~/.claude/`) are Claude Code-only. Skip those sections in `CLAUDE.md`.
+Subagents (`.claude/agents/`) and the `~/.claude/` auto-memory loader are Claude Code-only. Skip those sections in `CLAUDE.md`.
 
 ## Setup
 
