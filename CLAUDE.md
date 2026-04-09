@@ -150,7 +150,7 @@ Use `thinking/` for drafts, reasoning, and analysis before writing final notes. 
    - Claude operational context -- `brain/`
    - Codebase knowledge -- `reference/`
    - Drafts -- `thinking/`
-   - Vault root: `Home.md`, `CLAUDE.md`, `vault-manifest.json`, `CHANGELOG.md`, `CONTRIBUTING.md`, `README.md`, `LICENSE`, `.gitignore`. No user notes at root.
+   - Vault root: `Home.md`, `CLAUDE.md`, `AGENTS.md`, `GEMINI.md`, `vault-manifest.json`, `CHANGELOG.md`, `CONTRIBUTING.md`, `README.md`, `LICENSE`, `.gitignore`. No user notes at root.
 4. **Name files descriptively.** Use the note title as filename.
 
 ### Note Types

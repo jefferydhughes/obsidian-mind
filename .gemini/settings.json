@@ -1,0 +1,61 @@
+{
+  "hooks": {
+    "SessionStart": [
+      {
+        "matcher": "startup|resume",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "bash .claude/scripts/session-start.sh",
+            "timeout": 30000
+          }
+        ]
+      }
+    ],
+    "BeforeAgent": [
+      {
+        "hooks": [
+          {
+            "type": "command",
+            "command": "bash .claude/scripts/find-python.sh .claude/scripts/classify-message.py",
+            "timeout": 15000
+          }
+        ]
+      }
+    ],
+    "AfterTool": [
+      {
+        "matcher": "Write|Edit",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "bash .claude/scripts/find-python.sh .claude/scripts/validate-write.py",
+            "timeout": 15000
+          }
+        ]
+      }
+    ],
+    "PreCompress": [
+      {
+        "hooks": [
+          {
+            "type": "command",
+            "command": "bash .claude/scripts/pre-compact.sh",
+            "timeout": 30000
+          }
+        ]
+      }
+    ],
+    "SessionEnd": [
+      {
+        "hooks": [
+          {
+            "type": "command",
+            "command": "bash -c 'printf \"Session end checklist:\\n- Archive completed projects?\\n- Update indexes?\\n- New notes linked? (orphans are bugs)\\n\"'",
+            "timeout": 5000
+          }
+        ]
+      }
+    ]
+  }
+}

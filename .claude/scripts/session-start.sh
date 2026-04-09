@@ -1,10 +1,10 @@
 #!/bin/bash
 set -eo pipefail
-cd "$CLAUDE_PROJECT_DIR"
+cd "${CLAUDE_PROJECT_DIR:-${CODEX_PROJECT_DIR:-${GEMINI_PROJECT_DIR:-$(pwd)}}}"
 
 # Persist vault path for the session
 if [ -n "${CLAUDE_ENV_FILE:-}" ]; then
-  echo "export VAULT_PATH=\"$CLAUDE_PROJECT_DIR\"" >> "$CLAUDE_ENV_FILE"
+  echo "export VAULT_PATH=\"$(pwd)\"" >> "$CLAUDE_ENV_FILE"
 fi
 
 # Incremental QMD re-index (fast, non-blocking if qmd not installed)

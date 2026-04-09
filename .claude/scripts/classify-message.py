@@ -188,7 +188,7 @@ def main():
         hints = "\n".join(f"- {s}" for s in signals)
         output = {
             "hookSpecificOutput": {
-                "hookEventName": "UserPromptSubmit",
+                "hookEventName": input_data.get("hook_event_name", "UserPromptSubmit"),
                 "additionalContext": (
                     "Content classification hints (act on these if the user's message contains relevant info):\n"
                     + hints

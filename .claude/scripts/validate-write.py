@@ -26,7 +26,7 @@ def main():
     normalized = file_path.replace("\\", "/")
     # Skip dotfiles, templates, thinking, and root template files (not vault notes)
     basename = os.path.basename(normalized)
-    root_files = {"README.md", "CHANGELOG.md", "CONTRIBUTING.md", "CLAUDE.md"}
+    root_files = {"README.md", "CHANGELOG.md", "CONTRIBUTING.md", "CLAUDE.md", "AGENTS.md", "GEMINI.md"}
     if basename in root_files:
         sys.exit(0)
     # Also skip translated READMEs (README.ja.md, README.zh-CN.md, etc.)
@@ -65,7 +65,7 @@ def main():
         hint_list = "\n".join(f"  - {w}" for w in warnings)
         output = {
             "hookSpecificOutput": {
-                "hookEventName": "PostToolUse",
+                "hookEventName": input_data.get("hook_event_name", "PostToolUse"),
                 "additionalContext": f"Vault hygiene warnings for `{basename}`:\n{hint_list}\nFix these before moving on."
             }
         }
