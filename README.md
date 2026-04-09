@@ -154,6 +154,21 @@ obsidian-mind does **not** dump your entire vault into context. It uses tiered l
 
 SessionStart loads **lightweight context** — small excerpts from key files, filenames, and git summary — not full note contents. Claude queries by meaning via QMD before reading files, so it pulls only what's relevant. The classification hook is one lightweight Python call per message. The validation hook only fires on markdown writes and skips excluded paths.
 
+### Using with Other Agents
+
+obsidian-mind works with Claude Code, Codex CLI, and Gemini CLI. The vault conventions in `CLAUDE.md`, the hook scripts in `.claude/scripts/`, and the 18 commands in `.claude/commands/` are all agent-agnostic — pure Markdown, Python, and shell with no SDK dependencies.
+
+**Claude Code** — full support. Hooks, commands, subagents, and the memory system all work out of the box.
+
+**Codex CLI** — reads `AGENTS.md` natively. Hook config at `.codex/hooks.json` wires the same hook scripts Claude Code uses — session context, message classification, and write validation work automatically.
+
+**Gemini CLI** — reads `GEMINI.md` natively. Hook config at `.gemini/settings.json` maps Gemini's event names to the shared hook scripts.
+
+**Other agents** (Cursor, Windsurf, GitHub Copilot, JetBrains AI) — read `AGENTS.md` for vault conventions. Hook support varies by agent.
+
+> [!NOTE]
+> Subagents (`.claude/agents/`) and the memory system are Claude Code-specific. Hooks and commands work across Claude Code, Codex CLI, and Gemini CLI using shared scripts.
+
 ---
 
 ## 📅 Daily Workflow
@@ -257,6 +272,8 @@ The `bases/` folder contains database views that query your notes' frontmatter p
 ```
 Home.md                 Vault entry point — embedded Base views, quick links
 CLAUDE.md               Operating manual — Claude reads this every session
+AGENTS.md               Multi-agent guide — Codex, Cursor, Windsurf, etc.
+GEMINI.md               Multi-agent guide — Gemini CLI
 vault-manifest.json     Template metadata — version, structure, schemas
 CHANGELOG.md            Version history
 CONTRIBUTING.md         Template development checklist

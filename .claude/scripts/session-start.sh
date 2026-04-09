@@ -1,6 +1,6 @@
 #!/bin/bash
 set -eo pipefail
-cd "$CLAUDE_PROJECT_DIR"
+cd "${CLAUDE_PROJECT_DIR:-${CODEX_PROJECT_DIR:-${GEMINI_PROJECT_DIR:-$(pwd)}}}"
 
 # Persist vault path for the session
 if [ -n "${CLAUDE_ENV_FILE:-}" ]; then
