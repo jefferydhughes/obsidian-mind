@@ -1,6 +1,12 @@
 # Changelog
 
 
+
+## v4.0 — 2026-04-09
+
+### Changed
+- Merge feat/multi-agent-support: add Codex CLI and Gemini CLI support
+
 ## v3.8 — 2026-04-09
 
 ### Fixed
